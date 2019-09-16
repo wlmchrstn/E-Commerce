@@ -14,20 +14,9 @@ module.exports = {
             })
     },
 
-    All(req, res) {
-        Product.All({})
-            .then(result => {
-                result.unshift(res)
-                success(result)
-            })
-            .catch(err => {
-                err.unshift(res)
-                error(err)
-            })
-    },
-
     editProduct(req, res) {
-        Product.editProduct(req.params.id, req.body)
+        let data = { new: true };
+        Product.editProduct(req.user, req.params.id, req.body, data)
             .then(result => {
                 result.unshift(res)
                 success(result)
@@ -37,9 +26,19 @@ module.exports = {
                 error(err)
             })
     },
-
+    getProduct(req, res) {
+        Product.detail(req.params.id)
+            .then(result => {
+                result.unshift(res)
+                success(result)
+            })
+            .catch(err => {
+                err.unshift(res)
+                error(err)
+            })
+    },
     deleteProduct(req, res) {
-        Product.removeProduct(req.user, req.params.id, req.body)
+        Product.removeProduct(req.user, req.params.id, req.params.product)
             .then(result => {
                 result.unshift(res)
                 success(result)

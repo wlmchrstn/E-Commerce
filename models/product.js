@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const Profile = require('./profile.js')
-const _ = require('lodash');
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -15,6 +14,10 @@ const productSchema = new mongoose.Schema({
     stock: {
         type: Number,
         required: true
+    },
+    profiles: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Profile'
     }
 });
 
@@ -23,13 +26,8 @@ var Product = mongoose.model('Product', productSchema)
 
 Product.createProduct = async function(auth, id, data) {
     return new Promise(async function(resolve, reject) {
-
-        let notValid = await Product.findOne({
-            name: data.name
-        })
-        if(notValid) {
-            return reject ([400, "Product is already available!"])
-        }
+        let valid = await Profile.findById(id)
+        if(valid.role !== 'Merchant') return reject([403, 'Failed to create product! You are not a Merchant!'])
 
         Product.create(data)
             .then(result => {
@@ -47,24 +45,24 @@ Product.createProduct = async function(auth, id, data) {
             })
     })
 }
-
-Product.All = async function(data) {
-    return new Promise(async function(resolve, reject) {
-        Product.find(data)//.select(['_id', 'name', 'price', 'stock'])
+Product.detail = async function(id) {
+    return new Promise(async function(resolve,reject) {
+        Product.findById(id)
+            .select(['_id','name','price','stock'])
             .then(result => {
-                resolve([200, result, 'Here is the list!'])
+                resolve([200, result, 'Here is the detail!'])
             })
             .catch(err => {
-                reject([422, "Unexpected error! Failed to get list by category!"])
+                reject([422, 'Failed to get product detail!'])
             })
     })
 }
 
-Product.editProduct = async function(auth, id, data) {
-    return new Promise(async function(resolve, reject) {
+Product.editProduct = async function(auth, id, data, updated) {
+    return new Promise(async function(resolve,reject) {
         Product.findByIdAndUpdate(id, data)
             .then(result => {
-                resolve([200, 'Product updated!'])
+                resolve([200, result, 'Product updated!'])
             })
             .catch(err => {
                 reject([422, 'Unexpected error! Failed to update product!'])

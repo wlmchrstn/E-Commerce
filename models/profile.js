@@ -65,4 +65,51 @@ Profile.editProfile = async function(auth, id, data, updated) {
     })
 }
 
+Profile.getShop = async function(data) {
+    return new Promise(async function(resolve,reject) {
+        Profile.findOne(data)
+            .then(result => {
+                let hasil = {
+                    name: result.name,
+                    role: result.role,
+                    tags: result.tags,
+                    products: result.products
+                }
+                resolve([200, hasil, 'Here is the detail!'])
+            })
+            .catch(err => {
+                reject([422, 'Unexpected error! Failed to get merchant list!'])
+            })
+    })
+}
+
+Profile.getProfile = async function(id) {
+    return new Promise(async function(resolve,reject) {
+        Profile.findById(id)
+            .then(result => {
+                if(result.role == 'Merchant') {
+                    let hasil = {
+                        name: result.name,
+                        role: result.role,
+                        tags: result.tags,
+                        products: result.products
+                    }
+                    resolve([200, hasil, 'Here is the detail!'])
+                }
+                else if(result.role == 'Buyer') {
+                    let hasil = {
+                        name: result.name,
+                        role: result.role,
+                        tags: result.tags,
+                        orders: result.orders
+                    }
+                    resolve([200, hasil, 'Here is the detail!'])
+                }
+            })
+            .catch(err => {
+                reject([422, 'Unexpected error! Failed to get profile!'])
+            })
+    })
+}
+
 module.exports = Profile;

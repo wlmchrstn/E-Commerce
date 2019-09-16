@@ -27,7 +27,18 @@ module.exports = {
                 })
     },
     show(req, res) {
-        Profile.getProfile(req.user, req.params.id)
+        Profile.getProfile(req.params.id)
+            .then(result => {
+                result.unshift(res)
+                success(result)
+            })
+            .catch(err => {
+                err.unshift(res)
+                error(err)
+            })
+    },
+    shop(req, res) {
+        Profile.getShop({role: 'Merchant'})
             .then(result => {
                 result.unshift(res)
                 success(result)

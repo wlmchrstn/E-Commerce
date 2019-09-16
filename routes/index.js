@@ -5,6 +5,6 @@ const profileRouter = require('./profileRouter.js');
 
 router.use('/user', userRouter);
 router.use('/profile', profileRouter);
-// router.use('/user/product', productRouter)
+router.use('/product', productRouter)
 
 module.exports = router;
