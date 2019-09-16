@@ -1,17 +1,8 @@
-var success = (results, message) => {
-    return {
-        success: true,
-        message: message,
-        result: results
-    }
-}
-
-var error = (err, message) => {
+var error = (message) => {
     return{
         success: false,
-        message: message,
-        err: err
+        message: message
     }
 }
 
-module.exports = { success, error }
+module.exports = error

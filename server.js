@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDoc = require('./swagger.json');
 const env = process.env.NODE_ENV || 'development'
 const router = require('./routes/index.js');
 
@@ -22,6 +24,7 @@ mongoose.connect(dbConfig[env], { useNewUrlParser: true, useCreateIndex: true})
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 app.use('/api', router);
 app.get('/', (req, res) => {
     res.status(200).json({

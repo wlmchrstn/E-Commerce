@@ -43,7 +43,26 @@ Profile.makeProfile = async function(auth, data) {
                     data.save();
                     result.users = auth
                     result.save( (err, res) => {
-                        resolve([201, res, 'Profile created!'])
+                        if(res.role == 'Merchant') {
+                            let hasil = {
+                                _id: res._id,
+                                name: res.name,
+                                role: res.role,
+                                tags: res.tags,
+                                products: res.products
+                            }
+                            resolve([201, hasil, 'Here is the detail!'])
+                        }
+                        else if(res.role == 'Buyer') {
+                            let hasil = {
+                                _id: res._id,
+                                name: res.name,
+                                role: res.role,
+                                tags: res.tags,
+                                orders: res.orders
+                            }
+                            resolve([201, hasil, 'Here is the detail!'])
+                        }
                     })
                 })
             })

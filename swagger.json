@@ -1,0 +1,352 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is API Documentation.",
+    "version": "1.0.0",
+    "title": "Express Auth",
+    "contact": {
+      "email": "wlmchrstn@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "User Operation",
+      "description": "Operations about user",
+      "externalDocs": {
+        "description": "Find out more about our store",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/user/create": {
+      "post": {
+        "tags": [
+          "User Operation"
+        ],
+        "summary": "Register User",
+        "description": "Regiter an user",
+        "operationId": "addUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Users that will be registered on database",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserRegister"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "success": true,
+            "message": "User created!",
+            "result": {
+                "_id": "5d7f249df1f14f59f99c7b44",
+                "username": "test001",
+                "email": "test001@mail.com"
+            }
+          },
+          "422": [{
+            "success": false,
+            "message": "test001 is already taken!"
+          },
+          {
+            "success": false,
+            "message": "test001@mail.com is already registered!"
+          }
+          ],
+          "400": {
+            "success": false,
+            "message": "Unexpected error! Failed to create user!"
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": [
+          "User Operation"
+        ],
+        "summary": "Login User",
+        "description": "Login to registered user",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Will post username and password to database and database will check if it's true or not.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserLogin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "success": true,
+            "message": "Token created!",
+            "result": {
+                "token": "token"
+            }
+          },
+          "403": {
+            "success": false,
+            "message": "Password incorrect!"
+          },
+          "404": {
+            "success": false,
+            "message": "User hasn't registered yet!"
+          },
+          "422": {
+            "success": false,
+            "message": "Unexpected error! Failed to login!"
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/user/info": {
+      "get": {
+        "tags": [
+          "User Operation"
+        ],
+        "summary": "Show User",
+        "description": "Get user's details information.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "success": true,
+            "message": "Here is the details!",
+            "result": {
+                "profiles": [],
+                "_id": "id",
+                "username": "test001"
+            }
+          },
+          "401": {
+            "success": false,
+            "message": "Please insert token!"
+          },
+          "403": {
+            "success": false,
+            "message": "Invalid token!"
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/profile/create": {
+      "post": {
+        "tags": [
+          "Profile Operation"
+        ],
+        "summary": "Create User Profile",
+        "description": "Create current user profile",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Will create current user profile.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateProfile"
+            }
+          }
+        ],
+        "responses": {
+          "201": [{
+            "success": true,
+            "message": "Here is the detail!",
+            "result": {
+                "_id": "id",
+                "name": "Toko test001",
+                "role": "Merchant",
+                "tags": "Technology",
+                "products": []
+            }
+          },
+          {
+            "success": true,
+            "message": "Here is the detail!",
+            "result": {
+                "_id": "id",
+                "name": "Toko test001",
+                "role": "Buyer",
+                "tags": "Technology",
+                "orders": []
+            }
+          }],
+          "422": {
+            "success": false,
+            "message": "Unexpected error! Failed to create profile!"
+          },
+          "401": {
+            "success": false,
+            "message": "Please insert token!"
+          },
+          "403": {
+            "success": false,
+            "message": "Invalid token!"
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Authorization": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "UserRegister": {
+      "type": "object",
+      "required": [
+        "username",
+        "email",
+        "password"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "test001"
+        },
+        "email": {
+          "type": "string",
+          "example": "test001@mail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "test001"
+        }
+      }
+    },
+    "UserLogin": {
+      "type": "object",
+      "required": [
+        "username",
+        "password"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "test001"
+        },
+        "password": {
+          "type": "string",
+          "example": "test001"
+        }
+      }
+    },
+    "CreateProfile": {
+      "type": "object",
+      "required": [
+        "name",
+        "role",
+        "tags"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Toko test001"
+        },
+        "role": {
+          "description": "There is only 2 role(Merchant & Buyer)",
+          "type": "string",
+          "example 1": "Merchant",
+          "example 2": "Buyer"
+        },
+        "tags": {
+          "type": "string",
+          "example": "Technology"
+        }
+      }
+    },
+    "EditProfile": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Toko test001 baru"
+        },
+        "tags": {
+          "type": "string",
+          "example": "Fashion"
+        }
+      }
+    },
+    "TodoUpdate": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "title baru"
+        },
+        "status": {
+          "type": "boolean",
+          "example": true
+        },
+        "dueDate": {
+          "type": "string",
+          "example": "dueDate baru"
+        },
+        "body": {
+          "type": "string",
+          "example": "body baru"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
