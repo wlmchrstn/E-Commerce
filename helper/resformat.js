@@ -9,7 +9,7 @@ module.exports = {
     
     error(data) {
         return data[0].status(data[1]).json({
-            success: true,
+            success: false,
             message: data[2]
         })
     }

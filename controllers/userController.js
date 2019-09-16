@@ -37,17 +37,5 @@ module.exports = {
                 err.unshift(res)
                 error(err)
             })
-    },
-
-    addOrder(req, res) {
-        User.addOrder(req.user, req.body)
-            .then(result => {
-                result.unshift(res)
-                success(result)
-            })
-            .catch(err => {
-                err.unshift(res)
-                error(err)
-            })
     }
 }

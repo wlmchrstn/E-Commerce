@@ -2,28 +2,25 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Order = require('./order.js');
 
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
         unique: true,
-        required: true,
-        minlength: 6,
-        maxlength: 12
+        required: true
     },
     email: {
         type: String,
         unique: true,
-        required: true,
+        required: true
     },
     password: {
         type: String,
-        required: true,
+        required: true
     },
-    orders: [{
+    profiles: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Order'
+        ref: 'Profile'
     }]
 })
 
@@ -95,33 +92,19 @@ User.login = async function(data) {
     })
 }
 
-User.detail = async function(auth, data) {
+User.detail = async function(data) {
     return new Promise(async function(resolve,reject) {
         User.findById(data)
-            .select(['_id', 'username', 'email', 'orders'])
+            .select(['username','_id','profiles'])
+            .populate({
+                path: 'profile',
+                select: ['name','role','tags','users']
+            })
             .then(result => {
                 resolve([200, result, 'Here is the details!'])
             })
             .catch(err => {
-                reject([422, 'Unexpected error! Failed to get details!'])
-            })
-    })
-}
-
-User.addOrder = async function(auth, data) {
-    return new Promise(async function(resolve,reject) {
-        Order.create(data)
-            .then(result => {
-                User.findById(auth, (err, data) => {
-                    data.orders.push(result)
-                    result.users = req.user
-                    result.save( (err, data) => {
-                        resolve([201, data, 'Order list created!'])
-                    })
-                })
-            })
-            .catch(err => {
-                reject([422, "Unexpected error! Failed to create order!"])
+                reject([422, err, 'Unexpected error! Failed to get details!'])
             })
     })
 }

@@ -3,7 +3,7 @@ const { success, error } = require('../helper/resformat.js');
 
 module.exports = {
     createProduct(req, res) {
-        Product.createProduct(req.body)
+        Product.createProduct(req.user, req.params.id, req.body)
             .then(result => {
                 result.unshift(res)
                 success(result)
@@ -14,8 +14,8 @@ module.exports = {
             })
     },
 
-    getProduct(req, res) {
-        Product.getAllProduct({})
+    All(req, res) {
+        Product.All({})
             .then(result => {
                 result.unshift(res)
                 success(result)
@@ -39,7 +39,7 @@ module.exports = {
     },
 
     deleteProduct(req, res) {
-        Product.removeProduct(req.params.id)
+        Product.removeProduct(req.user, req.params.id, req.body)
             .then(result => {
                 result.unshift(res)
                 success(result)

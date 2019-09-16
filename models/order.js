@@ -1,19 +1,40 @@
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+const User = require('./user.js');
 
 const orderSchema = new mongoose.Schema({
     total: {
         type: Number,
-        required: false,
         default: 0
     },
-    products: [{
+    orderDetail: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product"
+        ref: "OrderDetail"
     }]
 })
 
-orderSchema.plugin(uniqueValidator)
 var Order = mongoose.model('Order', orderSchema);
 
-module.exports = Order
+Order.addOrder = async function(auth, data) {
+    return new Promise(async function(resolve,reject) {
+        Order.create(data)
+            .then(result => {
+                User.findById(auth, (err, data) => {
+                    data.orders.push(result)
+                    result.users = req.user
+                    result.save( (err, data) => {
+                        resolve([201, data, 'Order list created!'])
+                    })
+                })
+            })
+            .catch(err => {
+                reject([422, "Unexpected error! Failed to create order!"])
+            })
+    })
+}
+Order.removeOrder = async function(auth, id, data) {
+    return new Promise(async function(resolve, reject) {
+        Order.findById()
+    })
+}
+
+module.exports = Order;
