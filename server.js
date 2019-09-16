@@ -15,7 +15,7 @@ const dbConfig = {
     development: process.env.DBDEV,  
     test: process.env.DBTEST,
     login: process.env.DBLOGIN,
-    staging: process.env.staging
+    production: process.env.DBPROD
 }
 
 mongoose.connect(dbConfig[env], { useNewUrlParser: true, useCreateIndex: true})
