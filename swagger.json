@@ -55,26 +55,31 @@
         ],
         "responses": {
           "201": {
-            "success": true,
-            "message": "User created!",
-            "result": {
-                "_id": "5d7f249df1f14f59f99c7b44",
-                "username": "test001",
-                "email": "test001@mail.com"
+            "example": {
+              "success": true,
+              "message": "User created!",
+              "result": {
+                  "_id": "5d7f249df1f14f59f99c7b44",
+                  "username": "test001",
+                  "email": "test001@mail.com"
+              }
             }
           },
-          "422": [{
-            "success": false,
-            "message": "test001 is already taken!"
+          "422": {
+            "example": [{
+                "success": false,
+                "message": "test001 is already taken!"
+              },
+              {
+                "success": false,
+                "message": "test001@mail.com is already registered!"
+              }]
           },
-          {
-            "success": false,
-            "message": "test001@mail.com is already registered!"
-          }
-          ],
           "400": {
-            "success": false,
-            "message": "Unexpected error! Failed to create user!"
+            "example": {
+              "success": false,
+              "message": "Unexpected error! Failed to create user!"
+            }
           }
         }
       }
@@ -105,23 +110,31 @@
         ],
         "responses": {
           "200": {
-            "success": true,
-            "message": "Token created!",
-            "result": {
-                "token": "token"
+            "example": {
+              "success": true,
+              "message": "Token created!",
+              "result": {
+                  "token": "token"
+              }
             }
           },
           "403": {
-            "success": false,
-            "message": "Password incorrect!"
+            "example": {
+              "success": false,
+              "message": "Password incorrect!"
+            }
           },
           "404": {
-            "success": false,
-            "message": "User hasn't registered yet!"
+            "example": {
+              "success": false,
+              "message": "User hasn't registered yet!"
+            }
           },
           "422": {
-            "success": false,
-            "message": "Unexpected error! Failed to login!"
+            "example": {
+              "success": false,
+              "message": "Unexpected error! Failed to login!"
+            }
           }
         },
         "security": [
@@ -146,21 +159,27 @@
         ],
         "responses": {
           "200": {
-            "success": true,
-            "message": "Here is the details!",
-            "result": {
-                "profiles": [],
-                "_id": "id",
-                "username": "test001"
+            "example": {
+              "success": true,
+              "message": "Here is the details!",
+              "result": {
+                  "profiles": [],
+                  "_id": "id",
+                  "username": "test001"
+              }
             }
           },
           "401": {
-            "success": false,
-            "message": "Please insert token!"
+            "example": {
+              "success": false,
+              "message": "Please insert token!"
+            }
           },
           "403": {
-            "success": false,
-            "message": "Invalid token!"
+            "example": {
+              "success": false,
+              "message": "Invalid token!"
+            }
           }
         },
         "security": [
@@ -195,39 +214,47 @@
           }
         ],
         "responses": {
-          "201": [{
-            "success": true,
-            "message": "Here is the detail!",
-            "result": {
-                "_id": "id",
-                "name": "Toko test001",
-                "role": "Merchant",
-                "tags": "Technology",
-                "products": []
-            }
+          "201": {
+            "example": [{
+                "success": true,
+                "message": "Here is the detail!",
+                "result": {
+                    "_id": "id",
+                    "name": "Toko test001",
+                    "role": "Merchant",
+                    "tags": "Technology",
+                    "products": []
+                }
+              },
+              {
+                "success": true,
+                "message": "Here is the detail!",
+                "result": {
+                    "_id": "id",
+                    "name": "Toko test001",
+                    "role": "Buyer",
+                    "tags": "Technology",
+                    "orders": []
+                }
+              }]
           },
-          {
-            "success": true,
-            "message": "Here is the detail!",
-            "result": {
-                "_id": "id",
-                "name": "Toko test001",
-                "role": "Buyer",
-                "tags": "Technology",
-                "orders": []
-            }
-          }],
           "422": {
-            "success": false,
-            "message": "Unexpected error! Failed to create profile!"
+            "example": {
+              "success": false,
+              "message": "Unexpected error! Failed to create profile!"
+            }
           },
           "401": {
-            "success": false,
-            "message": "Please insert token!"
+            "example": {
+              "success": false,
+              "message": "Please insert token!"
+            }
           },
           "403": {
-            "success": false,
-            "message": "Invalid token!"
+            "example": {
+              "success": false,
+              "message": "Invalid token!"
+            }
           }
         },
         "security": [
