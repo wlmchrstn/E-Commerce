@@ -64,7 +64,7 @@ User.register = async function(data) {
             ])
             })
             .catch(err => {
-                reject([400, 'Unexpected error! Failed to create user!'])
+                reject([422, 'Unexpected error! Failed to create user!'])
             })
     })
 }
