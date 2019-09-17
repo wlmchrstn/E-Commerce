@@ -55,31 +55,29 @@
         ],
         "responses": {
           "201": {
-            "example": {
-              "success": true,
-              "message": "User created!",
-              "result": {
-                  "_id": "5d7f249df1f14f59f99c7b44",
-                  "username": "test001",
-                  "email": "test001@mail.com"
-              }
+            "description": "User created!",
+            "schema": {
+              "$ref":"#/definitions/UserCreated"
             }
           },
           "422": {
-            "example": [{
-                "success": false,
-                "message": "test001 is already taken!"
-              },
-              {
-                "success": false,
-                "message": "test001@mail.com is already registered!"
-              }]
+              "description": "Username already taken!",
+              "schema": 
+                {
+                  "$ref":"#/definitions/UsernameTaken"
+                }
           },
-          "400": {
-            "example": {
-              "success": false,
-              "message": "Unexpected error! Failed to create user!"
-            }
+          "x-422": {
+              "description": "Email already taken!",
+              "schema": {
+                "$ref":"#/definitions/EmailTaken"
+              }
+          },
+          "423": {
+              "description": "Failed to create user!",
+              "schema": {
+                "$ref":"#/definitions/FailedRegister"
+              }
           }
         }
       }
@@ -110,30 +108,27 @@
         ],
         "responses": {
           "200": {
-            "example": {
-              "success": true,
-              "message": "Token created!",
-              "result": {
-                  "token": "token"
-              }
+            "description": "Token created!",
+            "schema": {
+              "$ref":"#/definitions/TokenCreated"
             }
           },
           "403": {
-            "example": {
-              "success": false,
-              "message": "Password incorrect!"
+            "description": "Password incorrect!",
+            "schema": {
+              "$ref":"#/definitions/PasswordIncorrect"
             }
           },
           "404": {
-            "example": {
-              "success": false,
-              "message": "User hasn't registered yet!"
+            "description": "Invalid username!",
+            "schema": {
+              "$ref":"#/definitions/NotFound"
             }
           },
           "422": {
-            "example": {
-              "success": false,
-              "message": "Unexpected error! Failed to login!"
+            "description": "Failed to login!",
+            "schema": {
+              "$ref":"#/definitions/FailedLogin"
             }
           }
         },
@@ -159,26 +154,21 @@
         ],
         "responses": {
           "200": {
-            "example": {
-              "success": true,
-              "message": "Here is the details!",
-              "result": {
-                  "profiles": [],
-                  "_id": "id",
-                  "username": "test001"
-              }
+            "description": "User detail!",
+            "schema": {
+              "$ref":"#/definitions/UserDetail"
             }
           },
           "401": {
-            "example": {
-              "success": false,
-              "message": "Please insert token!"
+            "description": "No token!",
+            "schema": {
+              "$ref":"#/definitions/NoToken"
             }
           },
           "403": {
-            "example": {
-              "success": false,
-              "message": "Invalid token!"
+            "description": "Invalid token!",
+            "schema": {
+              "$ref":"#/definitions/InvalidToken"
             }
           }
         },
@@ -215,45 +205,45 @@
         ],
         "responses": {
           "201": {
-            "example": [{
-                "success": true,
-                "message": "Here is the detail!",
-                "result": {
-                    "_id": "id",
-                    "name": "Toko test001",
-                    "role": "Merchant",
-                    "tags": "Technology",
-                    "products": []
-                }
-              },
-              {
-                "success": true,
-                "message": "Here is the detail!",
-                "result": {
-                    "_id": "id",
-                    "name": "Toko test001",
-                    "role": "Buyer",
-                    "tags": "Technology",
-                    "orders": []
-                }
-              }]
+            "description": "Profile created!",
+            "schema": {
+              "$ref":"#/definitions/MerchantCreated"
+            }
+          },
+          "x-201": {
+            "description": "Profile created!",
+            "schema": {
+              "$ref":"#/definitions/BuyerCreated"
+            }
           },
           "422": {
-            "example": {
-              "success": false,
-              "message": "Unexpected error! Failed to create profile!"
+            "description": "Failed to create profile!",
+            "schema": {
+              "$ref":"#/definitions/FailedProfile"
+            }
+          },
+          "400": {
+            "description": "Bad request!",
+            "schema": {
+              "$ref":"#/definitions/BadRequest"
+            }
+          },
+          "x-400": {
+            "description": "Profile already created!",
+            "schema": {
+              "$ref":"#/definitions/ProfileAlready"
             }
           },
           "401": {
-            "example": {
-              "success": false,
-              "message": "Please insert token!"
+            "description": "No token!",
+            "schema": {
+              "$ref":"#/definitions/NoToken"
             }
           },
           "403": {
-            "example": {
-              "success": false,
-              "message": "Invalid token!"
+            "description": "Invalid token!",
+            "schema": {
+              "$ref":"#/definitions/InvalidToken"
             }
           }
         },
@@ -262,6 +252,464 @@
             "Authorization": []
           }
         ]
+      }
+    },
+    "/profile/update/{id}": {
+      "put": {
+        "tags": [
+          "Profile Operation"
+        ],
+        "summary": "Update User Profile",
+        "description": "Update current user profile",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Will update current user profile.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EditProfile"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile updated!",
+            "schema": {
+              "$ref":"#/definitions/MerchantUpdated"
+            }
+          },
+          "x-200": {
+            "description": "Profile updated!",
+            "schema": {
+              "$ref":"#/definitions/BuyerUpdated"
+            }
+          },
+          "422": {
+            "description": "Failed to update profile",
+            "schema": {
+              "$ref":"#/definitions/FailedProfileUpdate"
+            }
+          },
+          "400": {
+            "description": "Name can't be blank!",
+            "schema": {
+              "$ref":"#/definitions/BlankName"
+            }
+          },
+          "401": {
+            "description": "No token!",
+            "schema": {
+              "$ref":"#/definitions/NoToken"
+            }
+          },
+          "403": {
+            "description": "Invalid token!",
+            "schema": {
+              "$ref":"#/definitions/InvalidToken"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/profile/show/{id}": {
+      "post": {
+        "tags": [
+          "Profile Operation"
+        ],
+        "summary": "Get User Profile Detail",
+        "description": "Create current user profile detail",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+              "description": "Merchant profile",
+              "schema": {
+                "$ref":"#/definitions/MerchantCreated"
+              }
+          },
+          "x-200": {
+              "description": "Buyer profile",
+              "schema": {
+                "schema": {
+                  "$ref":"#/definitions/BuyerCreated"
+                }
+              }
+          },
+          "404": {
+            "description": "Profile not found!",
+            "schema": {
+              "$ref":"#/definitions/ProfileNotFound"
+            }
+          },
+          "401": {
+            "description": "No token!",
+            "schema": {
+              "$ref":"#/definitions/NoToken"
+            }
+          },
+          "403": {
+            "description": "Invalid token!",
+            "schema": {
+              "$ref":"#/definitions/InvalidToken"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/profile/shop": {
+      "get": {
+        "tags": [
+          "Profile Operation"
+        ],
+        "summary": "Get Merchant Profile Detail",
+        "description": "Get Merchant profile detail",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Here is the Merchant list!",
+            "schema": {
+              "$ref":"#/definitions/MerchantList"
+            }
+          },
+          "404": {
+            "description": "No Merchant available!",
+            "schema": {
+              "$ref":"#/definitions/MerchantNotFound"
+            }
+          }
+        }
+      }
+    },
+    "/product/create/{id}": {
+      "post": {
+        "tags":[
+          "Product Operation"
+        ],
+        "summary":"Create Product",
+        "description":"Create Merchant product",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in":"body",
+            "name":"body",
+            "description":"Will create current Merchant product",
+            "required":true,
+            "schema": {
+              "$ref":"#/definitions/CreateProduct"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description":"Product created!",
+            "schema":{
+              "$ref":"#/definitions/ProductCreated"
+            }
+          },
+          "400": {
+            "description":"Bad request!",
+            "schema": {
+              "$ref":"#/definitions/BadRequestProduct"
+            }
+          },
+          "422":{
+            "description":"Failed to create product!",
+            "schema":{
+              "$ref":"#/definitions/ProductFailed"
+            }
+          },
+          "x-403":{
+            "description":"You are not a Merchant!",
+            "schema":{
+              "$ref":"#/definitions/NotMerchant"
+            }
+          },
+          "401": {
+            "description": "No token!",
+            "schema": {
+              "$ref":"#/definitions/NoToken"
+            }
+          },
+          "403": {
+            "description": "Invalid token!",
+            "schema": {
+              "$ref":"#/definitions/InvalidToken"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/product/list": {
+      "get": {
+        "tags":[
+          "Product Operation"
+        ],
+        "summary":"Get All Product",
+        "description":"Get all Merchant's product",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+        ],
+        "responses": {
+          "200": {
+            "description":"Here is the list!",
+            "schema": {
+              "$ref":"#/definitions/AllProduct"
+            }
+          },
+          "404": {
+            "description":"Product not found!",
+            "schema": {
+              "$ref":"#/definitions/NoProduct"
+            }
+          }
+        }
+      }
+    },
+    "/product/detail/{id}": {
+      "get": {
+        "tags":[
+          "Product Operation"
+        ],
+        "summary":"Get Product Detail",
+        "description":"Get product detail",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name":"id",
+            "required":true,
+            "type":"string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description":"Here is the detail!",
+            "schema": {
+              "$ref":"#/definitions/DetailProduct"
+            }
+          },
+          "404": {
+            "description":"Product not found!",
+            "schema": {
+              "$ref":"#/definitions/NoProduct"
+            }
+          }
+        }
+      }
+    },
+    "/product/update/{id}": {
+      "get": {
+        "tags":[
+          "Product Operation"
+        ],
+        "summary":"Update Product",
+        "description":"Update product",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name":"id",
+            "required":true,
+            "type":"string"
+          },
+          {
+            "in":"body",
+            "name":"body",
+            "description":"Will update product!",
+            "required":true,
+            "schema": {
+              "$ref":"#/definitions/ProductUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description":"Product updated!",
+            "schema": {
+              "$ref":"#/definitions/UpdatedProduct"
+            }
+          },
+          "400": {
+            "description":"Failed to update! Name can't be blank!",
+            "schema": {
+              "$ref":"#/definitions/BlankNameUpdate"
+            }
+          },
+          "x-403": {
+            "description":"This is not your product!",
+            "schema": {
+              "$ref":"#/definitions/InvalidProductOwner"
+            }
+          },
+          "404": {
+            "description":"Product not found!",
+            "schema": {
+              "$ref":"#/definitions/NoProduct"
+            }
+          },
+          "422": {
+            "description":"Unexpected error! Failed to update product!",
+            "schema":{
+              "$ref":"#/definitions/FailedUpdateProduct"
+            }
+          },
+          "401": {
+            "description": "No token!",
+            "schema": {
+              "$ref":"#/definitions/NoToken"
+            }
+          },
+          "403": {
+            "description": "Invalid token!",
+            "schema": {
+              "$ref":"#/definitions/InvalidToken"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/product/delete/{id}/{product}": {
+      "get": {
+        "tags":[
+          "Product Operation"
+        ],
+        "summary":"Update Product",
+        "description":"Update product",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name":"id",
+            "required":true,
+            "type":"string"
+          },
+          {
+            "in":"path",
+            "name":"product",
+            "required":true,
+            "type":"string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description":"Product deleted!",
+            "schema": {
+              "$ref":"#/definitions/DeletedProduct"
+            }
+          },
+          "x-403": {
+            "description":"This is not your product!",
+            "schema": {
+              "$ref":"#/definitions/InvalidProductOwner"
+            }
+          },
+          "404": {
+            "description":"Product not found!",
+            "schema": {
+              "$ref":"#/definitions/NoProduct"
+            }
+          },
+          "422": {
+            "description":"Unexpected error! Failed to delete product!",
+            "schema":{
+              "$ref":"#/definitions/FailedDeleteProduct"
+            }
+          },
+          "401": {
+            "description": "No token!",
+            "schema": {
+              "$ref":"#/definitions/NoToken"
+            }
+          },
+          "403": {
+            "description": "Invalid token!",
+            "schema": {
+              "$ref":"#/definitions/InvalidToken"
+            }
+          }
+        }
       }
     }
   },
@@ -295,6 +743,66 @@
         }
       }
     },
+    "UserCreated": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example": true
+        },
+        "message": {
+          "type":"string",
+          "example":"User created!" 
+        },
+        "result": {
+          "type":"object",
+          "example":{
+            "_id": "5d7f249df1f14f59f99c7b44",
+            "username": "test001",
+            "email": "test001@mail.com"
+          }
+        }        
+      }
+    },
+    "UsernameTaken": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"test001 is already taken!"
+        }
+      }
+    },
+    "EmailTaken": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"test001@mail.com is already registered!" 
+        }
+      }
+    },
+    "FailedRegister": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to create user!"
+        }
+      }
+    },
     "UserLogin": {
       "type": "object",
       "required": [
@@ -312,6 +820,111 @@
         }
       }
     },
+    "TokenCreated": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example": true
+        },
+        "result": {
+          "type":"object",
+          "example":{
+            "token": "token"
+          }
+        },
+        "message": {
+          "type":"string",
+          "example":"Token created!"
+        }
+      }
+    },
+    "PasswordIncorrect": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Password incorrect!"
+        }
+      }
+    },
+    "NotFound": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"User hasn't registered yet!"
+        }
+      }
+    },
+    "FailedLogin": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to login!"
+        }
+      }
+    },
+    "UserDetail": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Here is the details!"
+        },
+        "result": {
+          "type":"object",
+          "example":{
+            "profiles": [],
+            "_id": "id",
+            "username": "test001"
+          }
+        }
+      }
+    },
+    "NoToken": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Please insert token!"
+        }
+      }
+    },
+    "InvalidToken": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Invalid token!"
+        }
+      }
+    },
     "CreateProfile": {
       "type": "object",
       "required": [
@@ -325,10 +938,8 @@
           "example": "Toko test001"
         },
         "role": {
-          "description": "There is only 2 role(Merchant & Buyer)",
           "type": "string",
-          "example 1": "Merchant",
-          "example 2": "Buyer"
+          "example": "Merchant/Buyer"
         },
         "tags": {
           "type": "string",
@@ -336,9 +947,93 @@
         }
       }
     },
+    "MerchantCreated": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Here is the detail!"
+        },
+        "result": {
+          "type":"object",
+          "example":{
+            "_id": "id",
+            "name": "Toko test001",
+            "role": "Merchant",
+            "tags": "Technology",
+            "products": []
+          }
+        }
+      }
+    },
+    "BuyerCreated": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Here is the detail!"
+        },
+        "result": {
+          "type":"object",
+          "example":{
+            "_id": "id",
+            "name": "Toko test001",
+            "role": "Buyer",
+            "tags": "Technology",
+            "orders": []
+          }
+        }
+      }
+    },
+    "FailedProfile": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to create profile!"
+        }
+      }
+    },
+    "BadRequest": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Bad request! Failed to create profile!"
+        }
+      }
+    },
+    "ProfileAlready": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Profile already created!"
+        }
+      }
+    },
     "EditProfile": {
       "type": "object",
-      "required": [],
       "properties": {
         "name": {
           "type": "string",
@@ -350,24 +1045,377 @@
         }
       }
     },
-    "TodoUpdate": {
-      "type": "object",
+    "MerchantUpdated": {
+      "type":"object",
       "properties": {
-        "title": {
-          "type": "string",
-          "example": "title baru"
+        "success": {
+          "type":"boolean",
+          "example":true
         },
-        "status": {
-          "type": "boolean",
-          "example": true
+        "message": {
+          "type":"string",
+          "example":"Profile updated!"
         },
-        "dueDate": {
-          "type": "string",
-          "example": "dueDate baru"
+        "result": {
+          "type":"object",
+          "example":{
+            "_id": "id",
+            "name": "Toko test001 baru",
+            "role": "Merchant",
+            "tags": "Fashion",
+            "products": []
+          }
+        }
+      }
+    },
+    "BuyerUpdated": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"object",
+          "example":true
         },
-        "body": {
+        "message": {
+          "type":"string",
+          "example":"Profile updated!"
+        },
+        "result": {
+          "type":"object",
+          "example":{
+            "_id": "id",
+            "name": "Toko test001 baru",
+            "role": "Buyer",
+            "tags": "Fashion",
+            "orders": []
+          }
+        }
+      }
+    },
+    "BlankName": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Failed to updated! Name can't be blank!"
+        }
+      }
+    },
+    "FailedProfileUpdate": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to update profile!"
+        }
+      }
+    },
+    "ProfileNotFound": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Profile not found!"
+        }
+      }
+    },
+    "MerchantList": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Here is the detail!"
+        },
+        "result": {
+          "type":"object",
+          "example":{
+            "_id": "5d80413d0fd9c313d71d2c50",
+            "name": "Toko test001",
+            "tags": "Technology",
+            "products": [
+                "5d8041cdbe09c5145e7a0c66",
+                "5d8042dc4ea05216c88a9631"
+            ]
+          }
+        }
+      }
+    },
+    "MerchantNotFound": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Merchant not found!"
+        }
+      }
+    },
+    "CreateProduct": {
+      "type": "object",
+      "required": [
+        "name",
+        "price",
+        "stock"
+      ],
+      "properties": {
+        "name": {
           "type": "string",
-          "example": "body baru"
+          "example": "Laptop"
+        },
+        "price": {
+          "type": "number",
+          "example": 5000
+        },
+        "stock": {
+          "type": "number",
+          "example": 25
+        }
+      }
+    },
+    "ProductCreated": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Product created!"
+        },
+        "result": {
+          "type":"object",
+          "example":{
+              "_id": "5d808f2296152457eaa4992c",
+              "name": "LAPTOP",
+              "price": 5000,
+              "stock": 25,
+              "profiles": "5d808b370a701b4f5090fcb9"
+          }
+        }
+      }
+    },
+    "BadRequestProduct": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Bad request! Failed to create product!"
+        }
+      }
+    },
+    "ProductFailed": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to create product!"
+        }
+      }
+    },
+    "NotMerchant": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Failed to create product! You are not a Merchant!"
+        }
+      }
+    },
+    "AllProduct": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Here is the list"
+        },
+        "result": {
+          "type":"object",
+          "example": {
+                "_id": "5d808f2296152457eaa4992c",
+                "name": "LAPTOP",
+                "price": 5000,
+                "stock": 25
+          }
+        }
+      }
+    },
+    "DetailProduct": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Here is the detail!"
+        },
+        "result": {
+          "type":"object",
+          "example": {
+            "_id": "5d808f2296152457eaa4992c",
+            "name": "LAPTOP",
+            "price": 5000,
+            "stock": 25
+          }
+        }
+      }
+    },
+    "NoProduct": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Product not found!"
+        }
+      }
+    },
+    "ProductUpdate": {
+      "type": "object",
+      "required": [
+        "name",
+        "price",
+        "stock"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "PC"
+        },
+        "price": {
+          "type": "number",
+          "example": 4000
+        },
+        "stock": {
+          "type": "number",
+          "example": 20
+        }
+      }
+    },
+    "UpdatedProduct": {
+      "type":"object",
+      "properties": {
+        "success":{
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Product updated!"
+        },
+        "result": {
+          "type":"object",
+          "example": {
+            "_id": "5d808f2296152457eaa4992c",
+            "name": "PC",
+            "price": 4000,
+            "stock": 20,
+            "profiles": "5d808b370a701b4f5q239221w"
+          }
+        }
+      }
+    },
+    "BlankNameUpdate": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Failed to update! Name can't be blank!"
+        }
+      }
+    },
+    "InvalidProductOwner": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"This is not your product!"
+        }
+      }
+    },
+    "FailedUpdateProduct": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to update product!"
+        }
+      }
+    },
+    "DeletedProduct": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Product deleted!"
+        }
+      }
+    },
+    "FailedDeleteProduct": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to delete product!"
         }
       }
     }

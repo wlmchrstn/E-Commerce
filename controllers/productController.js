@@ -14,6 +14,30 @@ module.exports = {
             })
     },
 
+    getAllProduct(req, res) {
+        Product.getAll({})
+            .then(result => {
+                result.unshift(res)
+                success(result)
+            })
+            .catch(err => {
+                err.unshift(res)
+                error(err)
+            })
+    },
+    
+    getProductDetail(req, res) {
+        Product.detail(req.params.id)
+            .then(result => {
+                result.unshift(res)
+                success(result)
+            })
+            .catch(err => {
+                err.unshift(res)
+                error(err)
+            })
+    },
+
     editProduct(req, res) {
         let data = { new: true };
         Product.editProduct(req.user, req.params.id, req.body, data)
@@ -26,17 +50,7 @@ module.exports = {
                 error(err)
             })
     },
-    getProduct(req, res) {
-        Product.detail(req.params.id)
-            .then(result => {
-                result.unshift(res)
-                success(result)
-            })
-            .catch(err => {
-                err.unshift(res)
-                error(err)
-            })
-    },
+    
     deleteProduct(req, res) {
         Product.removeProduct(req.user, req.params.id, req.params.product)
             .then(result => {
