@@ -7,7 +7,7 @@ const datauri = new Datauri();
 const cloudinary = require('cloudinary').v2
 const {success, error} = require('../helper/resFormatter.js')
 
-require('dotenv').config();
+// require('dotenv').config();
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
