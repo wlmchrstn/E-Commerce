@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
-const Profile = require('./profile.js')
+const Profile = require('./profile.js');
+const User = require('./user.js');
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -28,8 +29,10 @@ const productSchema = new mongoose.Schema({
 productSchema.plugin(uniqueValidator);
 var Product = mongoose.model('Product', productSchema)
 
-Product.createProduct = async function(auth, id, data) {
+Product.createProduct = async function(auth, data) {
     return new Promise(async function(resolve, reject) {
+        let user = await User.findById(auth)
+        let id = user.profiles[0].toString();
         let valid = await Profile.findById(id)
         if(valid.role !== 'Merchant') return reject([403, 'Failed to create product! You are not a Merchant!'])
         try {
@@ -85,13 +88,15 @@ Product.detail = async function(id) {
     })
 }
 
-Product.editProduct = async function(auth, id, data, updated) {
+Product.editProduct = async function(auth, id, data) {
     return new Promise(async function(resolve,reject) {
         let valid = await Product.findById(id)
         if(!valid) return reject([404, 'Product not found!'])
-        if(valid.profiles !== auth._id) return reject([403, 'This is not your product!'])
+        let user = await User.findById(auth)
+        if(user.profiles[0].toString() !== valid.profiles.toString()) return reject([403, 'This is not your product!'])
         try{
-            let update = await Product.findByIdAndUpdate(id, data)
+            let updated = { new: true };
+            let update = await Product.findByIdAndUpdate(id, data, updated)
             if(update.name == null || update.name == "") return reject([400, "Failed to update! Name can't be blank"])
             if(update) {
                 let hasil = {
@@ -110,11 +115,13 @@ Product.editProduct = async function(auth, id, data, updated) {
     })
 }
 
-Product.removeProduct = async function(auth, id, data) {
+Product.removeProduct = async function(auth, data) {
     return new Promise(async function(resolve, reject) {
         let valid = await Product.findById(data)
         if(!valid) return reject([404, 'Product not found!'])
-        if(valid.profiles !== auth._id) return reject([403, 'This is not your product!'])
+        let user = await User.findById(auth)
+        let id = user.profiles[0].toString();
+        if(id !== valid.profiles.toString()) return reject([403, 'This is not your product!'])
         try{
             Product.findById(data)
             .populate('profiles', '_id')

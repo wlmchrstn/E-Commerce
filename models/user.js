@@ -34,38 +34,43 @@ User.generateHash = function(data) {
 
 User.register = async function(data) {
     return new Promise(async function(resolve, reject) {
-        if(!data.username || !data.email || !data.password) {
-            return reject([422, 'Unexpected error! Failed to create user!'])
+        try {
+            if(!data.username || !data.email || !data.password) {
+                return reject([422, 'Unexpected error! Failed to create user!'])
+            }
+    
+            let salt = 10;
+            let pwd = await bcrypt.hash(data.password, salt)
+    
+            let userUsername = await User.findOne({ username: data.username})
+            if (userUsername) return reject([422, `${data.username} is already taken!`])
+            
+            let userEmail = await User.findOne({ email: data.email })
+            if (userEmail) return reject([422, `${data.email} is already registered!`])
+            
+            User.create({
+                username: data.username,
+                email: data.email,
+                password: pwd
+                })
+                .then(user => {
+                    resolve([
+                        201,
+                        {
+                        _id: user._id,
+                        username: user.username,
+                        email: user.email
+                        },
+                        'User created!'
+                ])
+                })
+                .catch(err => {
+                    reject([422, 'Unexpected error! Failed to create user!'])
+                })
         }
-
-        let salt = 10;
-        let pwd = await bcrypt.hash(data.password, salt)
-
-        let userUsername = await User.findOne({ username: data.username})
-        if (userUsername) return reject([422, `${data.username} is already taken!`])
-        
-        let userEmail = await User.findOne({ email: data.email })
-        if (userEmail) return reject([422, `${data.email} is already registered!`])
-        
-        User.create({
-            username: data.username,
-            email: data.email,
-            password: pwd
-            })
-            .then(user => {
-                resolve([
-                    201,
-                    {
-                    _id: user._id,
-                    username: user.username,
-                    email: user.email
-                    },
-                    'User created!'
-            ])
-            })
-            .catch(err => {
-                reject([422, 'Unexpected error! Failed to create user!'])
-            })
+        catch(err){
+            reject([422, 'Unexpected error! Failed to create user!'])
+        }
     })
 }
 

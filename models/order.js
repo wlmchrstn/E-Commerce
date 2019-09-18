@@ -1,35 +1,46 @@
 const mongoose = require('mongoose');
 const Profile = require('./profile.js');
+const User = require('./user.js');
 
 const orderSchema = new mongoose.Schema({
+    details: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Detail"
+    }],
     total: {
-        type: Number,
-        default: 0
+        type: Number
     },
     profiles: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Profile"
-    },
-    orderDetails: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Detail"
-    }]
+    }
 })
 
 var Order = mongoose.model('Order', orderSchema);
 
-Order.addOrder = async function(auth, id, data) {
+Order.addOrder = async function(auth, data) {
     return new Promise(async function(resolve,reject) {
+        let user = User.findById(auth)
+        let id = user.profiles[0].toString();
         let valid = await Profile.findById(id)
         if(valid.role !== 'Buyer') return ([403, 'Failed to create orders! You are not a buyer!'])
         try{
             Order.create(data)
             .then(result => {
-                Profile.findById(auth, (err, hasil) => {
+                console.log(result)
+                Profile.findById(id, (err, hasil) => {
+                    console.log(hasil.orders)
                     hasil.orders.push(result)
-                    result.profiles = auth
+                    hasil.save();
+                    result.profiles = id
                     result.save( (err, res) => {
-                        resolve([201, res, 'Order list created!'])
+                        let order = {
+                            _id: res._id,
+                            total: res.total,
+                            details: res.details,
+                            profiles: res.profiles
+                        }
+                        resolve([201, order, 'Order created!'])
                     })
                 })
             })
@@ -42,11 +53,12 @@ Order.addOrder = async function(auth, id, data) {
         }
     })
 }
-Order.removeOrder = async function(auth, id, data) {
+Order.removeOrder = async function(auth, data) {
     return new Promise(async function(resolve, reject) {
         let valid = await Order.findById(data)
         if(!valid) return reject([404, 'Order not found!'])
-        if(valid.profiles !== auth._id) return reject([403, 'This is not your order!'])
+        let user = User.findById(auth)
+        let id = user.profiles[0].toString();
         try{
             Order.findById(data)
             .populate('profiles', '_id')

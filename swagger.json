@@ -145,7 +145,7 @@
           "User Operation"
         ],
         "summary": "Show User",
-        "description": "Get user's details information.",
+        "description": "Get user detail information if access granted!.",
         "consumes": [
           "application/json"
         ],
@@ -271,6 +271,7 @@
           {
             "in": "path",
             "name": "id",
+            "description": "Insert profile id here!",
             "required": true,
             "type": "string"
           },
@@ -330,12 +331,12 @@
       }
     },
     "/profile/show/{id}": {
-      "post": {
+      "get": {
         "tags": [
           "Profile Operation"
         ],
         "summary": "Get User Profile Detail",
-        "description": "Create current user profile detail",
+        "description": "Get user profile detail",
         "consumes": [
           "application/json"
         ],
@@ -346,6 +347,7 @@
           {
             "in": "path",
             "name": "id",
+            "description": "Insert profile id here!",
             "required": true,
             "type": "string"
           }
@@ -391,43 +393,13 @@
         ]
       }
     },
-    "/profile/shop": {
-      "get": {
-        "tags": [
-          "Profile Operation"
-        ],
-        "summary": "Get Merchant Profile Detail",
-        "description": "Get Merchant profile detail",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Here is the Merchant list!",
-            "schema": {
-              "$ref":"#/definitions/MerchantList"
-            }
-          },
-          "404": {
-            "description": "No Merchant available!",
-            "schema": {
-              "$ref":"#/definitions/MerchantNotFound"
-            }
-          }
-        }
-      }
-    },
-    "/product/create/{id}": {
+    "/product/create": {
       "post": {
         "tags":[
           "Product Operation"
         ],
         "summary":"Create Product",
-        "description":"Create Merchant product",
+        "description":"Create current Merchant product",
         "consumes":[
           "application/json"
         ],
@@ -435,12 +407,6 @@
           "application/json"
         ],
         "parameters":[
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "string"
-          },
           {
             "in":"body",
             "name":"body",
@@ -496,6 +462,51 @@
         ]
       }
     },
+    "/upload/{id}": {
+      "post":{
+        "tags":[
+          "Product Operation"
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name":"id",
+            "required":true,
+            "description":"Insert product id here!",
+            "type":"string"
+          },
+          {
+            "in":"formData",
+            "name":"preview",
+            "required":true,
+            "description":"Insert the picture here!",
+            "type":"file"
+          }
+        ],
+        "summary":"Upload product preview",
+        "description":"Upload product preview",
+        "consumes":[
+          "multipart/form-data"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "responses":{
+          "200":{
+            "description":"Picture uploaded!",
+            "schema":{
+              "$ref":"#/definitions/Uploaded"
+            }
+          },
+          "422":{
+            "description":"Unexpected error! Failed to upload picture!",
+            "schema":{
+              "$ref":"#/definitions/FailedUpload"
+            }
+          }
+        }
+      }
+    },
     "/product/list": {
       "get": {
         "tags":[
@@ -544,6 +555,7 @@
           {
             "in":"path",
             "name":"id",
+            "description":"Insert product id here!",
             "required":true,
             "type":"string"
           }
@@ -565,12 +577,12 @@
       }
     },
     "/product/update/{id}": {
-      "get": {
+      "put": {
         "tags":[
           "Product Operation"
         ],
         "summary":"Update Product",
-        "description":"Update product",
+        "description":"Update current Merchant product",
         "consumes":[
           "application/json"
         ],
@@ -581,6 +593,7 @@
           {
             "in":"path",
             "name":"id",
+            "description":"Insert product id here!",
             "required":true,
             "type":"string"
           },
@@ -605,12 +618,6 @@
             "description":"Failed to update! Name can't be blank!",
             "schema": {
               "$ref":"#/definitions/BlankNameUpdate"
-            }
-          },
-          "x-403": {
-            "description":"This is not your product!",
-            "schema": {
-              "$ref":"#/definitions/InvalidProductOwner"
             }
           },
           "404": {
@@ -645,13 +652,13 @@
         ]
       }
     },
-    "/product/delete/{id}/{product}": {
-      "get": {
+    "/product/delete/{id}": {
+      "delete": {
         "tags":[
           "Product Operation"
         ],
-        "summary":"Update Product",
-        "description":"Update product",
+        "summary":"Delete Product",
+        "description":"Delete current Merchant product",
         "consumes":[
           "application/json"
         ],
@@ -662,12 +669,7 @@
           {
             "in":"path",
             "name":"id",
-            "required":true,
-            "type":"string"
-          },
-          {
-            "in":"path",
-            "name":"product",
+            "description":"Insert product id here!",
             "required":true,
             "type":"string"
           }
@@ -677,12 +679,6 @@
             "description":"Product deleted!",
             "schema": {
               "$ref":"#/definitions/DeletedProduct"
-            }
-          },
-          "x-403": {
-            "description":"This is not your product!",
-            "schema": {
-              "$ref":"#/definitions/InvalidProductOwner"
             }
           },
           "404": {
@@ -709,7 +705,353 @@
               "$ref":"#/definitions/InvalidToken"
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/order/create": {
+      "post": {
+        "tags":[
+          "Order Operation"
+        ],
+        "summary":"Create Order",
+        "description":"Create Buyer order",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+        ],
+        "responses": {
+          "201": {
+            "description":"Order created!",
+            "schema":{
+              "$ref":"#/definitions/OrderCreated"
+            }
+          },
+          "400": {
+            "description":"Bad request!",
+            "schema": {
+              "$ref":"#/definitions/BadRequestOrder"
+            }
+          },
+          "422":{
+            "description":"Failed to create order!",
+            "schema":{
+              "$ref":"#/definitions/OrderFailed"
+            }
+          },
+          "x-403":{
+            "description":"You are not a Buyer!",
+            "schema":{
+              "$ref":"#/definitions/NotBuyer"
+            }
+          },
+          "401": {
+            "description": "No token!",
+            "schema": {
+              "$ref":"#/definitions/NoToken"
+            }
+          },
+          "403": {
+            "description": "Invalid token!",
+            "schema": {
+              "$ref":"#/definitions/InvalidToken"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/order/delete/{id}": {
+      "get": {
+        "tags":[
+          "Order Operation"
+        ],
+        "summary":"Delete Order",
+        "description":"Delete order",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name":"id",
+            "description":"Insert order id here!",
+            "required":true,
+            "type":"string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description":"Order deleted!",
+            "schema": {
+              "$ref":"#/definitions/DeletedOrder"
+            }
+          },
+          "404": {
+            "description":"Order not found!",
+            "schema": {
+              "$ref":"#/definitions/NoOrder"
+            }
+          },
+          "422": {
+            "description":"Unexpected error! Failed to delete order!",
+            "schema":{
+              "$ref":"#/definitions/FailedDeleteOrder"
+            }
+          },
+          "401": {
+            "description": "No token!",
+            "schema": {
+              "$ref":"#/definitions/NoToken"
+            }
+          },
+          "403": {
+            "description": "Invalid token!",
+            "schema": {
+              "$ref":"#/definitions/InvalidToken"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/order/add-product/{id}": {
+      "post": {
+        "tags":[
+          "Order Operation"
+        ],
+        "summary":"Add Product to Order Detail",
+        "description":"Add product to order detail",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name":"id",
+            "description":"Insert order id here!",
+            "required":true,
+            "type":"string"
+          },
+          {
+            "in":"body",
+            "name":"body",
+            "description":"Will add product to order!",
+            "required":true,
+            "schema": {
+              "$ref":"#/definitions/addProduct"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description":"Product added!",
+            "schema": {
+              "$ref":"#/definitions/AddedProduct"
+            }
+          },
+          "400": {
+            "description":"Bad Request!",
+            "schema":{
+              "$ref":"#/definitions/BadRequestAddProduct"
+            }
+          },
+          "422": {
+            "description":"Unexpected error! Failed to add product!",
+            "schema": {
+              "$ref":"#/definitions/FailedAddProduct"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/order/detail-product/{id}": {
+      "get": {
+        "tags":[
+          "Order Operation"
+        ],
+        "summary":"Get Order Detail",
+        "description":"Get order detail",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name":"id",
+            "description":"Insert detail id here!",
+            "required":true,
+            "type":"string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description":"Here is the detail!",
+            "schema":{
+              "$ref":"#/definitions/OrderDetail"
+            }
+          },
+          "400": {
+            "description":"Bad Request!",
+            "schema": {
+              "$ref":"#/definitions/BadRequestDetail"
+            }
+          },
+          "422": {
+            "description":"Unexpected error! Failed to get order detail!",
+            "schema":{
+              "$ref":"#/definitions/FailedGetDetail"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/order/update-order-detail/{id}": {
+      "put": {
+        "tags":[
+          "Order Operation"
+        ],
+        "summary":"Edit Product In Order Detail",
+        "description":"Edit product in order detail",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name":"id",
+            "description":"Insert detail id here!",
+            "required":true,
+            "type":"string"
+          },
+          {
+            "in":"body",
+            "name":"body",
+            "description":"Will update product in order detail!",
+            "required":true,
+            "schema": {
+              "$ref":"#/definitions/EditOrderDetail"
+            }
+          }
+        ],
+        "responses": {
+          "200":{
+            "description":"Order updated!",
+            "schema":{
+              "$ref":"#/definitions/OrderDetailUpdated"
+            }
+          },
+          "400":{
+            "description":"Bad Request!",
+            "schema":{
+              "$ref":"#/definitions/BadRequestUpdateDetail"
+            }
+          },
+          "422":{
+            "description":"Unexpected error! Failed to update detail!",
+            "schema":{
+              "$ref":"#/definitions/FailedUpdateDetail"
+            }
+          },
+          "404":{
+            "description":"Order detail not found!",
+            "schema":{
+              "$ref":"#/definitions/DetailNotFound"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/order/remove-product/{id}": {
+      "delete": {
+        "tags":[
+          "Order Operation"
+        ],
+        "summary":"Remove Product From Order Detail",
+        "description":"Remove product from order detail",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name":"id",
+            "description":"Insert detail id here!",
+            "required":true,
+            "type":"string"
+          }
+        ],
+        "responses": {
+          "200":{
+            "description":"Product removed from detail!",
+            "schema":{
+              "$ref":"#/definitions/RemovedOrder"
+            }
+          },
+          "404":{
+            "description":"Order detail not found!",
+            "schema":{
+              "$ref":"#/definitions/DetailNotFound"
+            }
+          },
+          "422": {
+            "description":"Unexpected error! Failed to remove product from detail!",
+            "schema":{
+              "$ref":"#/definitions/FailedRemoveOrder"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
       }
     }
   },
@@ -939,6 +1281,7 @@
         },
         "role": {
           "type": "string",
+          "description":"Choose one!",
           "example": "Merchant/Buyer"
         },
         "tags": {
@@ -1130,44 +1473,6 @@
         }
       }
     },
-    "MerchantList": {
-      "type":"object",
-      "properties": {
-        "success": {
-          "type":"boolean",
-          "example":true
-        },
-        "message": {
-          "type":"string",
-          "example":"Here is the detail!"
-        },
-        "result": {
-          "type":"object",
-          "example":{
-            "_id": "5d80413d0fd9c313d71d2c50",
-            "name": "Toko test001",
-            "tags": "Technology",
-            "products": [
-                "5d8041cdbe09c5145e7a0c66",
-                "5d8042dc4ea05216c88a9631"
-            ]
-          }
-        }
-      }
-    },
-    "MerchantNotFound": {
-      "type":"object",
-      "properties": {
-        "success": {
-          "type":"boolean",
-          "example":false
-        },
-        "message": {
-          "type":"string",
-          "example":"Merchant not found!"
-        }
-      }
-    },
     "CreateProduct": {
       "type": "object",
       "required": [
@@ -1249,6 +1554,43 @@
         "message": {
           "type":"string",
           "example":"Failed to create product! You are not a Merchant!"
+        }
+      }
+    },
+    "Uploaded":{
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":true
+        },
+        "message":{
+          "type":"string",
+          "example":"Picture uploaded!"
+        },
+        "result":{
+          "type":"object",
+          "example":{
+            "_id": "5d81a704b97f37354619cf6c",
+            "name": "Kopi",
+            "price": 5000,
+            "stock": 50,
+            "profiles": "5d81a67e0478a73437e0765c",
+            "preview": "http://res.cloudinary.com/wlmchrstn/image/upload/v1568820109/ulilvdvfiwxrvxxzbnmt.jpg"
+          }
+        }
+      }
+    },
+    "FailedUpload":{
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":false
+        },
+        "message":{
+          "type":"string",
+          "example":"Unexpected error! Failed to upload picture!"
         }
       }
     },
@@ -1367,19 +1709,6 @@
         }
       }
     },
-    "InvalidProductOwner": {
-      "type":"object",
-      "properties": {
-        "success": {
-          "type":"boolean",
-          "example":false
-        },
-        "message": {
-          "type":"string",
-          "example":"This is not your product!"
-        }
-      }
-    },
     "FailedUpdateProduct": {
       "type":"object",
       "properties": {
@@ -1416,6 +1745,321 @@
         "message": {
           "type":"string",
           "example":"Unexpected error! Failed to delete product!"
+        }
+      }
+    },
+    "OrderCreated": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Order created!"
+        },
+        "result": {
+          "type":"object",
+          "example": {
+            "total": 0,
+            "orderDetails": [],
+            "_id": "5d80c2aa319555103fb6d0a2",
+            "profiles": "5d80c1516222240f9bd9c4ce"
+          }
+        }
+      }
+    },
+    "BadRequestOrder": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Bad request! Failed to create order!"
+        }
+      }
+    },
+    "OrderFailed": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to create order!"
+        }
+      }
+    },
+    "NotBuyer": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Failed to create order! You are not a Buyer!"
+        }
+      }
+    },
+    "DeletedOrder": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Order deleted!"
+        }
+      }
+    },
+    "NoOrder": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Order not found!"
+        }
+      }
+    },
+    "FailedDeleteOrder": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to delete order!"
+        }
+      }
+    },
+    "addProduct": {
+      "type":"object",
+      "required":[
+        "amount",
+        "products"
+      ],
+      "properties": {
+        "amount": {
+          "type":"number",
+          "example": 3
+        },
+        "products": {
+          "type": "string",
+          "example":"5d81a716b97f37354619cf6e"
+        }
+      }
+    },
+    "AddedProduct": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":true
+        },
+        "message": {
+          "type":"string",
+          "example":"Product added!"
+        },
+        "result": {
+          "type":"object",
+          "example": {
+            "_id":"5d7f249df1f14f59f99c7b44",
+            "products":"5d81a716b97f37354619cf6e",
+            "amount":3,
+            "subtotal":15000,
+            "orders":"5d80c315942240f9bd9c4ce"
+          }
+        }
+      }
+    },
+    "BadRequestAddProduct": {
+      "type":"object",
+      "properties": {
+        "success":{
+          "type":"boolean",
+          "example":false
+        },
+        "message":{
+          "type":"string",
+          "example":"Bad request! Failed to add product!"
+        }
+      }
+    },
+    "FailedAddProduct": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Unexpected error! Failed to add product!"
+        }
+      }
+    },
+    "OrderDetail": {
+      "type":"object",
+      "properties": {
+        "success":{
+          "type":"boolean",
+          "example":true
+        },
+        "message":{
+          "type":"string",
+          "example":"Here is the detail!"
+        },
+        "result": {
+          "type":"object",
+          "example": {
+            "_id":"5d7f249df1f14f59f99c7b44",
+            "products":"5d81a716b97f37354619cf6e",
+            "amount":3,
+            "subtotal":15000,
+            "orders":"5d80c315942240f9bd9c4ce"
+          }
+        }
+      }
+    },
+    "BadRequestDetail": {
+      "type":"object",
+      "properties": {
+        "success":{
+          "type":"boolean",
+          "example":false
+        },
+        "message": {
+          "type":"string",
+          "example":"Bad request! Failed to get order detail!"
+        }
+      }
+    },
+    "FailedGetDetail": {
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":false
+        },
+        "message":{
+          "type":"string",
+          "example":"Unexpected error! Failed to get order detail!"
+        }
+      }
+    },
+    "EditOrderDetail": {
+      "type":"object",
+      "required":[
+        "amount"
+      ],
+      "properties":{
+        "amount":{
+          "type":"number",
+          "example":5
+        }
+      }
+    },
+    "OrderDetailUpdated": {
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":true
+        },
+        "message":{
+          "type":"string",
+          "example":"Order updated!"
+        },
+        "result":{
+          "type":"object",
+          "example":{
+            "_id":"5d7f249df1f14f59f99c7b44",
+            "products":"5d81a716b97f37354619cf6e",
+            "amount":5,
+            "subtotal":25000,
+            "orders":"5d80c315942240f9bd9c4ce"
+          }
+        }
+      }
+    },
+    "BadRequestUpdateDetail": {
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":false
+        },
+        "message":{
+          "type":"string",
+          "example":"Bad request! Failed to update detail!"
+        }
+      }
+    },
+    "FailedUpdateDetail": {
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":false
+        },
+        "message":{
+          "type":"string",
+          "example":"Unexpected error! Failed to update detail!"
+        }
+      }
+    },
+    "RemovedOrder": {
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":true
+        },
+        "message":{
+          "type":"string",
+          "example":"Product removed from detail!"
+        }
+      }
+    },
+    "FailedRemoveOrder": {
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":false
+        },
+        "message":{
+          "type":"string",
+          "example":"Unexpected error! Failed to remove product from detail!"
+        }
+      }
+    },
+    "DetailNotFound": {
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":false
+        },
+        "message":{
+          "type":"string",
+          "example":"Order detail not found!"
         }
       }
     }

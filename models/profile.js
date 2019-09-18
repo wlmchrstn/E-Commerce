@@ -114,7 +114,7 @@ Profile.editProfile = async function(auth, id, data, updated) {
 
 Profile.getProfile = async function(id) {
     return new Promise(async function(resolve,reject) {
-        let result = await Profile.findById(id)
+        let result = await Profile.findById(id).populate('products')
         if(!result) return reject([404, 'Profile not found!'])
         if(result.role == 'Merchant') {
             let hasil = {
@@ -133,22 +133,6 @@ Profile.getProfile = async function(id) {
                 orders: result.orders
             }
             resolve([200, hasil, 'Here is the detail!'])
-        }
-    })
-}
-
-Profile.getShop = async function(data) {
-    return new Promise(async function(resolve,reject) {
-        let valid = await Profile.findOne(data)
-        if(!valid) return reject([404, 'Merchant not found!'])
-        if(valid) {
-            let hasil = {
-                _id: valid._id,
-                name: valid.name,
-                tags: valid.tags,
-                products: valid.products
-            }
-            resolve([200, hasil, 'Here is the list!'])
         }
     })
 }

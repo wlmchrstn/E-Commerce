@@ -7,14 +7,16 @@ const datauri = new Datauri();
 const cloudinary = require('cloudinary').v2
 const {success, error} = require('../helper/resFormatter.js')
 
+require('dotenv').config();
+
 cloudinary.config({
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey: process.env.CLOUDINARY_API_KEY,
-    apiSecret: process.env.CLOUDINARY_API_SECRET
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
 const upload = multer().single('preview')
-const _    = require('lodash');
+
 // Upload Single File
 router.post('/:id', upload, auth, function(req, res){
                         const file = datauri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
@@ -37,4 +39,3 @@ router.post('/:id', upload, auth, function(req, res){
                     })
 
 module.exports = router;
-
