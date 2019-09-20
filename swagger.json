@@ -375,6 +375,36 @@
         }
       }
     },
+    "/profile/history": {
+      "get": {
+        "tags":[
+          "Profile Operation"
+        ],
+        "summary":"Check History",
+        "description":"Check current profile history",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+        ],
+        "responses":{
+          "200":{
+            "description":"Here is the detail!",
+            "schema":{
+              "$ref":"#/definitions/History"
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
     "/product/create": {
       "post": {
         "tags":[
@@ -2434,6 +2464,28 @@
         "message":{
           "type":"string",
           "example":"Unexpected error! Failed to confirm order!!"
+        }
+      }
+    },
+    "History": {
+      "type":"object",
+      "properties":{
+        "success":{
+          "type":"boolean",
+          "example":true
+        },
+        "message":{
+          "type":"string",
+          "example":"Here is the detail!"
+        },
+        "result":{
+          "type":"object",
+          "example":{
+            "_id": "5d83a074b14f7e18cc143f8c",
+            "name": "William",
+            "role": "Buyer",
+            "histories": []
+          }
         }
       }
     }

@@ -40,7 +40,7 @@ var Profile = mongoose.model('Profile', profileSchema)
 
 Profile.makeProfile = async function(auth, data) {
     return new Promise(async function(resolve,reject) {
-        try {
+        // try {
             let valid = await User.findById(auth)
             if(valid.profiles[0] !== undefined) return reject([409, 'Profile already created!'])
             Profile.create(data)
@@ -76,10 +76,10 @@ Profile.makeProfile = async function(auth, data) {
                 .catch(err => {
                     reject([400, 'Bad request! Failed to create profile!'])
                 })
-        }
-        catch(err) {
-            reject([422, "Unexpected error! Failed to create profile!"])
-        }
+        // }
+        // catch(err) {
+        //     reject([422, "Unexpected error! Failed to create profile!"])
+        // }
     })
 }
 
@@ -144,6 +144,21 @@ Profile.getProfile = async function(id) {
             }
             resolve([200, hasil, 'Here is the detail!'])
         }
+    })
+}
+
+Profile.checkHistories = async function(auth) {
+    return new Promise(async function(resolve,reject) {
+            let user = await User.findById(auth)
+            let profileId = user.profiles[0].toString()
+            let profile = await Profile.findById(profileId).populate('histories')
+            let hasil = {
+                _id: profile._id,
+                name: profile.name,
+                role: profile.role,
+                histories: profile.histories
+            }
+            if(profile) return resolve([200, hasil, 'Here is the detail!'])
     })
 }
 

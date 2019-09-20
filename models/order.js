@@ -94,7 +94,7 @@ Order.getOrder = async function(auth, id) {
         try{
             let user = await User.findById(auth)
             let profileId = user.profiles[0].toString();
-            let order = await Order.findById(id)
+            let order = await Order.findById(id).populate('details')
             let profId = order.profiles.toString();
             if(profileId !== profId) return reject([403, 'This is not your order!'])
             let hasil = {

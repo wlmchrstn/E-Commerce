@@ -37,3 +37,5 @@ app.listen(port, () => {
     console.log(`Server started at ${Date()}!`);
     console.log(`Listening on port ${port}!`);
 })
+
+module.exports = app;

@@ -48,25 +48,20 @@ User.register = async function(data) {
             let userEmail = await User.findOne({ email: data.email })
             if (userEmail) return reject([422, `${data.email} is already registered!`])
             
-            User.create({
+            let user = await User.create({
                 username: data.username,
                 email: data.email,
                 password: pwd
                 })
-                .then(user => {
-                    resolve([
-                        201,
-                        {
-                        _id: user._id,
-                        username: user.username,
-                        email: user.email
-                        },
-                        'User created!'
+                resolve([
+                    201,
+                    {
+                    _id: user._id,
+                    username: user.username,
+                    email: user.email
+                    },
+                    'User created!'
                 ])
-                })
-                .catch(err => {
-                    reject([422, 'Unexpected error! Failed to create user!'])
-                })
         }
         catch(err){
             reject([422, 'Unexpected error! Failed to create user!'])
@@ -92,7 +87,7 @@ User.login = async function(data) {
             return reject([403, "Password incorrect!"])
         }
         
-        let token = jwt.sign({_id: user._id}, process.env.DBLOGIN)
+        let token = jwt.sign({_id: user._id}, process.env.DBLOGIN, {expiresIn: '1h'})
         resolve([200, {token: token}, 'Token created!'])
     })
 }
