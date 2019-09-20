@@ -26,6 +26,18 @@ module.exports = {
             })
     },
     
+    search(req, res) {
+        Product.search(req.query)
+            .then(result => {
+                result.unshift(res)
+                success(result)
+            })
+            .catch(err => {
+                err.unshift(res)
+                error(err)
+            })
+    },
+
     getProductDetail(req, res) {
         Product.detail(req.params.id)
             .then(result => {

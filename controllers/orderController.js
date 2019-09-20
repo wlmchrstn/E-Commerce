@@ -27,20 +27,8 @@ module.exports = {
             })
     },
 
-    addToOrder(req, res) {
-        Detail.addProduct(req.user, req.params.id, req.body)
-            .then(result => {
-                result.unshift(res)
-                success(result)
-            })
-            .catch(err => {
-                err.unshift(res)
-                error(err)
-            })
-    },
-    
     getOrderDetail(req, res) {
-        Detail.getDetail(req.user, req.params.id)
+        Order.getOrder(req.user, req.params.id)
             .then(result => {
                 result.unshift(res)
                 success(result)
@@ -51,8 +39,30 @@ module.exports = {
             })
     },
 
+    addProduct(req, res) {
+        Order.addProduct(req.user, req.params.id, req.body)
+            .then(result => {
+                result.unshift(res)
+                success(result)
+            })
+            .catch(err => {
+                err.unshift(res)
+                error(err)
+            })
+    },
+    getDetail(req, res) {
+        Detail.getDetail(req.user, req.params.id)
+        .then(result => {
+            result.unshift(res)
+            success(result)
+        })
+        .catch(err => {
+            err.unshift(res)
+            error(err)
+        })
+    },
     editProductOrder(req, res) {
-        Detail.updateProduct(req.user, req.params.id, req.body)
+        Order.editProduct(req.user, req.params.id, req.body)
             .then(result => {
                 result.unshift(res)
                 success(result)
@@ -64,7 +74,19 @@ module.exports = {
     },
 
     removeProductOrder(req, res) {
-        Detail.removeProduct(req.user, req.params.id)
+        Order.removeProduct(req.user, req.params.id)
+            .then(result => {
+                result.unshift(res)
+                success(result)
+            })
+            .catch(err => {
+                err.unshift(res)
+                error(err)
+            })
+    },
+
+    checkout(req, res) {
+        Order.checkout(req.user, req.params.id)
             .then(result => {
                 result.unshift(res)
                 success(result)

@@ -28,6 +28,10 @@ const profileSchema = new mongoose.Schema({
     orders: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Order'
+    }],
+    histories: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order'
     }]
 })
 
@@ -38,7 +42,7 @@ Profile.makeProfile = async function(auth, data) {
     return new Promise(async function(resolve,reject) {
         try {
             let valid = await User.findById(auth)
-            if(valid.profiles[0] !== undefined) return reject([400, 'Profile already created!'])
+            if(valid.profiles[0] !== undefined) return reject([409, 'Profile already created!'])
             Profile.create(data)
                 .then(result => {
                     User.findById(auth, (err, data) => {
@@ -79,11 +83,15 @@ Profile.makeProfile = async function(auth, data) {
     })
 }
 
-Profile.editProfile = async function(auth, id, data, updated) {
+Profile.editProfile = async function(auth, data, updated) {
     return new Promise(async function(resolve,reject) {
         try {
             let valid = (data.name)
             if(valid == null || valid == "") return reject([400, "Failed to updated! Name can't be blank!"])
+            let user = await User.findById(auth)
+            let id = user.profiles[0].toString()
+            let yes = await Profile.findById(id)
+            if(!yes) return reject([422, 'Unexpected error! Please create profile first!'])
             let result = await Profile.findByIdAndUpdate(id, data, updated)
                 if(result.role == 'Merchant') {
                     let hasil = {
@@ -121,7 +129,8 @@ Profile.getProfile = async function(id) {
                 name: result.name,
                 role: result.role,
                 tags: result.tags,
-                products: result.products
+                products: result.products,
+                histories: result.histories
             }
             resolve([200, hasil, 'Here is the detail!'])
         }
@@ -130,7 +139,8 @@ Profile.getProfile = async function(id) {
                 name: result.name,
                 role: result.role,
                 tags: result.tags,
-                orders: result.orders
+                orders: result.orders,
+                histories: result.histories
             }
             resolve([200, hasil, 'Here is the detail!'])
         }

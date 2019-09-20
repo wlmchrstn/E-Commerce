@@ -4,6 +4,7 @@ const auth = require('../helper/auth.js');
 
 router.post('/create', auth, productRouter.createProduct);
 router.get('/list', productRouter.getAllProduct);
+router.get('/search', productRouter.search);
 router.get('/detail/:id', productRouter.getProductDetail);
 router.put('/update/:id', auth, productRouter.editProduct);
 router.delete('/delete/:id', auth, productRouter.deleteProduct);

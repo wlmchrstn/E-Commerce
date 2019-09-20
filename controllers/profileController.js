@@ -16,7 +16,7 @@ module.exports = {
    
     update(req, res) {
         let data = { new: true };
-            Profile.editProfile(req.user, req.params.id, {name: req.body.name, tags: req.body.tags}, data)
+            Profile.editProfile(req.user, {name: req.body.name, tags: req.body.tags}, data)
                 .then(result => {
                     result.unshift(res)
                     success(result)
