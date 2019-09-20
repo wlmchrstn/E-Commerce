@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 const router = require('express').Router();
 const auth = require('../helper/auth.js');
 const Product = require('../models/product.js');

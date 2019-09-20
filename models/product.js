@@ -75,10 +75,7 @@ Product.createProduct = async function(auth, data) {
 Product.getAll = async function(data) {
     return new Promise(async function(resolve,reject) {
         let all = await Product.find(data).select(['_id','name','price','stock','preview', 'profiles'])
-        if(!all) {
-            reject([404, 'Product not found!'])
-        }
-        else if(all) {
+        if(all) {
             resolve([200, all, 'Here is the list!'])
         }
     })
@@ -86,16 +83,8 @@ Product.getAll = async function(data) {
 
 Product.search = async function(data) {
     return new Promise(async function(resolve,reject) {
-        try {
-            let product = await Product.find(data)
-            if(!product) {
-                reject([404, 'Product not found!'])
-            }
-            else return resolve([200, product, 'Here is the list!'])
-        }
-        catch(err){
-            reject([404, 'Product not found!'])
-        }
+        let product = await Product.find(data)
+        resolve([200, product, 'Here is the list!'])
     })
 }
 
@@ -117,25 +106,20 @@ Product.editProduct = async function(auth, id, data) {
         if(!valid) return reject([404, 'Product not found!'])
         let user = await User.findById(auth)
         if(user.profiles[0].toString() !== valid.profiles.toString()) return reject([403, 'This is not your product!'])
-        try{
-            let updated = { new: true };
-            let update = await Product.findByIdAndUpdate(id, data, updated)
-            if(update.name == null || update.name == "") return reject([400, "Failed to update! Name can't be blank"])
-            if(update) {
-                let hasil = {
-                    _id: update._id,
-                    name: update.name,
-                    preview: update.preview,
-                    description: update.description,
-                    price: update.price,
-                    stock: update.stock,
-                    profiles: update.profiles
-                }
-                resolve([200, hasil, 'Product updated!'])
+        if(data.name == null || data.name == "") return reject([400, "Failed to update! Name can't be blank"])
+        let updated = { new: true };
+        let update = await Product.findByIdAndUpdate(id, data, updated)
+        if(update) {
+            let hasil = {
+                _id: update._id,
+                name: update.name,
+                preview: update.preview,
+                description: update.description,
+                price: update.price,
+                stock: update.stock,
+                profiles: update.profiles
             }
-        }
-        catch(err){
-            reject([422, 'Unexpected error! Failed to update product!'])
+            resolve([200, hasil, 'Product updated!'])
         }
     })
 }
@@ -147,8 +131,7 @@ Product.removeProduct = async function(auth, data) {
         let user = await User.findById(auth)
         let id = user.profiles[0].toString();
         if(id !== valid.profiles.toString()) return reject([403, 'This is not your product!'])
-        try{
-            Product.findById(data)
+        Product.findById(data)
             .populate('profiles', '_id')
             .exec((err, hasil) => {
                 Product.findByIdAndDelete(hasil._id)
@@ -162,10 +145,6 @@ Product.removeProduct = async function(auth, data) {
                                 })
                     )
             })
-        }
-        catch(err) {
-            reject([422, 'Unexpected error! Failed to delete product!'])
-        }
     })
 }
 

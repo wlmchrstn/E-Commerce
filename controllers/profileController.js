@@ -32,10 +32,6 @@ module.exports = {
                 result.unshift(res)
                 success(result)
             })
-            .catch(err => {
-                err.unshift(res)
-                error(err)
-            })
     },
     
     history(req, res) {
@@ -43,10 +39,6 @@ module.exports = {
             .then(result => {
                 result.unshift(res)
                 success(result)
-            })
-            .catch(err => {
-                err.unshift(res)
-                error(err)
             })
     }
 }

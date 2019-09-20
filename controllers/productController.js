@@ -20,10 +20,6 @@ module.exports = {
                 result.unshift(res)
                 success(result)
             })
-            .catch(err => {
-                err.unshift(res)
-                error(err)
-            })
     },
     
     search(req, res) {
@@ -31,10 +27,6 @@ module.exports = {
             .then(result => {
                 result.unshift(res)
                 success(result)
-            })
-            .catch(err => {
-                err.unshift(res)
-                error(err)
             })
     },
 

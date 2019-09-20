@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema({
 userSchema.plugin(uniqueValidator);
 var User = mongoose.model('User', userSchema)
 
+/* istanbul ignore next */
 User.generateHash = function(data) {
     let salt = 10
     return bcrypt.hashSync(data, salt)

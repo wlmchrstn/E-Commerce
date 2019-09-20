@@ -30,7 +30,7 @@ Order.addOrder = async function(auth, data) {
         let user = await User.findById(auth)
         let id = user.profiles[0].toString();
         let valid = await Profile.findById(id)
-        if(valid.role !== 'Buyer') return ([403, 'Failed to create orders! You are not a buyer!'])
+        if(valid.role !== 'Buyer') return reject([403, 'Failed to create orders! You are not a buyer!'])
         try{
             Order.create(data)
             .then(result => {
@@ -240,7 +240,6 @@ Order.checkout = async function(auth, id) {
             let user = await User.findById(auth)
             let profileId = user.profiles[0].toString();
             let profile = await Profile.findById(profileId)
-            if(!profile) return reject([404, 'Profile not found!'])
             if(profileId !== orderId) return reject([403, 'This is not your order!'])
             let detailId = order.details[0].toString()
             let detail = await Detail.findById(detailId)

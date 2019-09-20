@@ -123,6 +123,7 @@ Profile.editProfile = async function(auth, data, updated) {
 Profile.getProfile = async function(id) {
     return new Promise(async function(resolve,reject) {
         let result = await Profile.findById(id).populate('products')
+        /* istanbul ignore next */
         if(!result) return reject([404, 'Profile not found!'])
         if(result.role == 'Merchant') {
             let hasil = {

@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 var success = (result, message) => {
     return{
         success: true,

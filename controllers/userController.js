@@ -33,9 +33,5 @@ module.exports = {
                 result.unshift(res)
                 success(result)
             })
-            .catch(err => {
-                err.unshift(res)
-                error(err)
-            })
     }
 }
