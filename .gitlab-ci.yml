@@ -13,8 +13,8 @@ process compile:
 process test:
   stage: test
   script:
-    - npm run test
-    
+    - npm test
+
 production:
   type: deploy
   stage: production
